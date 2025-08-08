@@ -1,0 +1,150 @@
+<!--  Floating Thumbnail Quiz Button (Right Middle) -->
+<style>
+  #quizLauncher {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10000;
+    padding: 0;
+  }
+  #quizLauncher img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    object-fit: cover;
+    transition: transform 0.2s ease-in-out;
+  }
+  #quizLauncher img:hover {
+    transform: scale(1.1);
+  }
+</style>
+
+<button id="quizLauncher" onclick="openQuiz()" title="Take Quiz">
+  <img src="https://debeatzgh.wordpress.com/wp-content/uploads/2025/08/createavibranteye-catchingyoutubeblogthumbnailfeaturingafloatingquizpop-upicononadigitalblogpage5084708667809205788.jpg" alt="Take Quiz">
+</button>
+
+<!-- Quiz Modal -->
+<style>
+  .quiz-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .quiz-content {
+    background: #fff;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    border-radius: 10px;
+    font-family: sans-serif;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    text-align: center;
+  }
+  .quiz-close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  .start-btn {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .start-btn:hover {
+    background: #0056b3;
+  }
+  #timer {
+    font-weight: bold;
+    color: #555;
+  }
+</style>
+
+<div id="quizModal" class="quiz-modal">
+  <div class="quiz-content">
+    <span class="quiz-close" onclick="closeQuiz()">×</span>
+    <!-- Thumbnail Preview in Modal -->
+    <a href="https://debeatzgh.wordpress.com/wp-content/uploads/2025/08/createavibranteye-catchingyoutubeblogthumbnailfeaturingafloatingquizpop-upicononadigitalblogpage5084708667809205788.jpg" target="_blank">
+      <img src="https://debeatzgh.wordpress.com/wp-content/uploads/2025/08/createavibranteye-catchingyoutubeblogthumbnailfeaturingafloatingquizpop-upicononadigitalblogpage5084708667809205788.jpg" alt="Quiz Thumbnail" style="width:100%; border-radius:8px; margin-bottom:15px;">
+    </a>
+    <h3>🧠 Quick Quiz</h3>
+    <div id="quizBody"></div>
+    <button id="startBtn" class="start-btn" onclick="startQuiz()">Start Quiz</button>
+    <p id="timer" style="display:none;">⏱ Time left: <span id="timeLeft">30</span>s</p>
+    <p id="finalScore" style="font-weight:bold;"></p>
+    <br>
+    <button onclick="window.location.href='https://beatzde4.blogspot.com/'">Proceed to Blog</button>
+    <button onclick="window.location.href='https://beatzde4.blogspot.com/p/htmlgenbtn-position-fixed-bottom-20px.html'">Take More Quizzes</button>
+  </div>
+</div>
+
+<script>
+  const quizQuestions = [
+    { question: "What is Java?", answers: ["A coffee drink", "A programming language", "An island"], correct: [1] },
+    { question: "Which tools are in 'Google Essentials'?", answers: ["Microsoft Office", "Apple iWork", "Gmail, Drive, Docs, Calendar"], correct: [2] },
+    { question: "What does AI stand for?", answers: ["Automated Input", "Artificial Intelligence", "Applied Imaging"], correct: [1] },
+    { question: "What is HTML?", answers: ["HyperText Markup Language", "HighText Machine Language", "Home Tool Markup Language"], correct: [0] },
+    { question: "What is the focus of D Konsult’s blog?", answers: ["Cooking recipes", "AI, digital tools & online business", "Fashion trends"], correct: [1] },
+    { question: "'Decoding AI' is about?", answers: ["Blockchain", "AI fundamentals, ML, ethics", "Vintage computing"], correct: [1] },
+    { question: "Which service lets you hire freelancers from the blog?", answers: ["Uber", "Netflix", "Fiverr"], correct: [2] }
+  ];
+
+  let currentQuestion = 0, score = 0, timer, timeLeft = 30;
+
+  function openQuiz() {
+    document.getElementById("quizModal").style.display = "flex";
+  }
+  function closeQuiz() {
+    document.getElementById("quizModal").style.display = "none";
+    clearInterval(timer);
+  }
+  function startQuiz() {
+    document.getElementById("startBtn").style.display = "none";
+    showQuestion();
+    startTimer();
+    document.getElementById("timer").style.display = "block";
+  }
+  function showQuestion() {
+    const q = quizQuestions[currentQuestion];
+    let html = `<p><strong>Q${currentQuestion + 1}:</strong> ${q.question}</p>`;
+    q.answers.forEach((ans, i) => {
+      html += `<label><input type="checkbox" name="answer" value="${i}"> ${ans}</label><br>`;
+    });
+    html += `<br><button onclick="checkAnswer()" class="start-btn">Next</button>`;
+    document.getElementById("quizBody").innerHTML = html;
+  }
+  function checkAnswer() {
+    const selected = Array.from(document.querySelectorAll('input[name="answer"]:checked')).map(el => parseInt(el.value));
+    const correct = quizQuestions[currentQuestion].correct;
+    if (JSON.stringify(selected.sort()) === JSON.stringify(correct.sort())) score++;
+    currentQuestion++;
+    if (currentQuestion < quizQuestions.length) showQuestion();
+    else endQuiz();
+  }
+  function startTimer() {
+    timer = setInterval(() => {
+      timeLeft--;
+      document.getElementById("timeLeft").textContent = timeLeft;
+      if (timeLeft <= 0) { clearInterval(timer); endQuiz(); }
+    }, 1000);
+  }
+  function endQuiz() {
+    clearInterval(timer);
+    document.getElementById("quizBody").innerHTML = "";
+    document.getElementById("finalScore").textContent = `You scored ${score} out of ${quizQuestions.length}`;
+  }
+</script>
